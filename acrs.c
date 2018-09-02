@@ -2,6 +2,7 @@
 Arthur Carlos da Rocha Silva
 Spoj problem - JFILA14 -Fila
 https://br.spoj.com/problems/JFILA14/
+Improved. Now it does not return "time limit.." on spoj
 */
 
 #include <stdio.h>
@@ -16,6 +17,7 @@ typedef struct ListNodes
 typedef struct Lists
 {
     ListNode *data; //Points to the first node of the list  
+    ListNode *lastNode;
     long int size;  
 } List ;
 
@@ -27,6 +29,7 @@ List* createList()
     {
         (*newList).size = 0;
         (*newList).data = NULL; 
+        (*newList).lastNode = NULL; 
     }
     return newList; 
 } // createList function
@@ -58,27 +61,23 @@ void removeFromList(List *inputList, long int valueToRemove)
 
 void addToList(List *inputList, long int valueToAdd)
 {
-    ListNode *newNode, *aux;
-    newNode = (ListNode*)malloc(sizeof(ListNode)); //allocating memory for a new node
-    aux = (*inputList).data; //aux points to the first node in the list  
-    if (aux == NULL) // The list in empty
-    {   
-        (*newNode).nextNode = (*inputList).data ; //nextNode`s next value will point to NULL
-        (*newNode).nodeValue = valueToAdd; 
-        (*inputList).data = newNode; //List starts at newNode
-        (*inputList).size ++ ; 
-    
-    }
-    else
+    ListNode *newNode;
+    newNode = (ListNode*)malloc(sizeof(ListNode));
+    if ((*inputList).data  == NULL) //if the list is empty
     {
-        while((*aux).nextNode != NULL) //aux points to the last non null node of the list
-        {
-            aux = (*aux).nextNode;
-        }
-        (*newNode).nextNode = (*aux).nextNode ; //newNode points to the following node, which is null
+        (*newNode).nextNode = NULL; //the new node will point to null
+        inputList->lastNode = newNode; //the last node of the list will point to the new node
         (*newNode).nodeValue = valueToAdd; 
-        (*aux).nextNode = newNode;   
-        (*inputList).size ++ ; 
+        (*inputList).data = newNode; //the beginning of the list will be the new node
+        (*inputList).size ++;
+    }
+    else 
+    {
+        (*newNode).nextNode = NULL ; 
+        (*newNode).nodeValue = valueToAdd;
+        inputList->lastNode->nextNode = newNode; //the last element of the list will point to the new node
+        (*inputList).lastNode = newNode; //the new node will now be the last element of the upgrated list
+        (*inputList).size ++;
 
     }
 }//addToList
